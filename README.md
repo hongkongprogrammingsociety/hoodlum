@@ -16,13 +16,13 @@ mvn -q -DskipTests=false clean test package
 Run with an input file (see `examples/quickstart.hlm`):
 
 ```
-java -jar target/hoodlum-*-SNAPSHOT-shaded.jar examples/quickstart.hlm
+java -jar target/hoodlum-*-SNAPSHOT.jar examples/quickstart.hlm
 ```
 
 Or run with the built-in demo program (no args):
 
 ```
-java -jar target/hoodlum-*-SNAPSHOT-shaded.jar
+java -jar target/hoodlum-*-SNAPSHOT.jar
 ```
 
 ## Language sketch

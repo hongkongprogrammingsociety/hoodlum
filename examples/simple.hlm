@@ -1,0 +1,3 @@
+// Simple test for bytecode compilation
+PRINT 42;
+PRINT cash;

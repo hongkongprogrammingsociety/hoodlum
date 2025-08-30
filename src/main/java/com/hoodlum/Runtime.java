@@ -11,6 +11,7 @@ public class Runtime {
     public void deposit(double amount) { cash += amount; log("Deposited $"+amount+", cash="+cash); }
 
     public void buy(String symbol, int qty, Double priceOpt){
+		System.out.println("buy");
         double price = priceOpt != null ? priceOpt : 0.0;
         double cost = qty * price;
         if (priceOpt != null && cash < cost) throw new RuntimeException("Insufficient cash");

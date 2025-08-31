@@ -22,7 +22,6 @@ public class HoodlumTest {
         var rt = new Runtime();
         var ev = new Evaluator(rt);
         ev.visit(tree);
-
         assertTrue(rt.getCash() >= 0);
     }
 }

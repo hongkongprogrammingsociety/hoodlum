@@ -1,6 +1,6 @@
 # Hoodlum
 
-Hoodlum is a tiny DSL for stock trading, built with ANTLR4 and Java.
+Hoodlum is a tiny DSL for stock trading.
 
 ## Build
 

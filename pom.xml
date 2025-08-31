@@ -16,31 +16,6 @@
         <antlr4.version>4.13.1</antlr4.version>
         <junit.jupiter.version>5.10.2</junit.jupiter.version>
     </properties>
-
-    <dependencies>
-        <!-- ANTLR runtime for generated parser/lexer -->
-        <dependency>
-            <groupId>org.antlr</groupId>
-            <artifactId>antlr4-runtime</artifactId>
-            <version>${antlr4.version}</version>
-        </dependency>
-
-        <!-- ASM for bytecode generation -->
-        <dependency>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm</artifactId>
-            <version>9.6</version>
-        </dependency>
-
-        <!-- JUnit 5 for tests -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>${junit.jupiter.version}</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -68,6 +43,16 @@
                         </configuration>
                     </execution>
                 </executions>
+				<configuration>
+					<sourceDirectory>${basedir}/src/main/antlr4</sourceDirectory>
+					<outputDirectory>${project.build.directory}/generated-sources/antlr4/com/hoodlum/antlr</outputDirectory>
+					<arguments>
+						<argument>-package</argument>
+						<argument>com.hoodlum.antlr</argument>
+					</arguments>
+					<listener>true</listener>
+					<visitor>true</visitor>
+				</configuration>
             </plugin>
 
             <!-- Create an executable fat-jar -->
@@ -87,7 +72,7 @@
                             <shadedClassifierName>shaded</shadedClassifierName>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.hoodlum.Main</mainClass>
+                                    <mainClass>com.hoodlum.BytecodeRunner</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
@@ -105,5 +90,30 @@
             </plugin>
         </plugins>
     </build>
+
+
+    <dependencies>
+        <!-- ANTLR runtime for generated parser/lexer -->
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr4-runtime</artifactId>
+            <version>${antlr4.version}</version>
+        </dependency>
+
+        <!-- ASM for bytecode generation -->
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>9.6</version>
+        </dependency>
+
+        <!-- JUnit 5 for tests -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
 </project>

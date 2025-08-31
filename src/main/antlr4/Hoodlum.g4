@@ -1,9 +1,5 @@
 grammar Hoodlum;
 
-@header {
-package com.hoodlum.antlr;
-}
-
 // A minimal stock trading DSL
 // Example program:
 //   BUY 100 AAPL @ 175.50;

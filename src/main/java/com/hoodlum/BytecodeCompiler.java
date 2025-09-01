@@ -87,6 +87,44 @@ public class BytecodeCompiler extends HoodlumBaseVisitor<Void> {
     }
 
     @Override
+    public Void visitForStmtStmt(HoodlumParser.ForStmtStmtContext ctx) {
+        // FOR x = start TO end ... NEXT
+        String varName = ctx.ID().getText();
+        HoodlumParser.ExprContext startExpr = ctx.expr(0);
+        HoodlumParser.ExprContext endExpr = ctx.expr(1);
+
+        // Use local variable slot 1 for loop variable (slot 0 is 'args')
+        int varSlot = 1;
+
+        // Initialize loop variable
+        mainMethod.visitLdcInsn(Integer.parseInt(startExpr.getText()));
+        mainMethod.visitVarInsn(ISTORE, varSlot);
+
+        Label loopStart = new Label();
+        Label loopEnd = new Label();
+        mainMethod.visitLabel(loopStart);
+
+        // Check loop condition: x <= end
+        mainMethod.visitVarInsn(ILOAD, varSlot);
+        mainMethod.visitLdcInsn(Integer.parseInt(endExpr.getText()));
+        mainMethod.visitJumpInsn(IF_ICMPGT, loopEnd);
+
+        // Loop body: visit all statements inside the loop
+        if (ctx.forBody() != null) {
+            for (HoodlumParser.StatementContext stmtCtx : ctx.forBody().statement()) {
+                visit(stmtCtx);
+            }
+        }
+
+        // Increment loop variable
+        mainMethod.visitIincInsn(varSlot, 1);
+        mainMethod.visitJumpInsn(GOTO, loopStart);
+
+        mainMethod.visitLabel(loopEnd);
+        return null;
+    }
+
+    @Override
     public Void visitExpr(HoodlumParser.ExprContext ctx) {
         if (ctx.NUMBER() != null) {
             // Convert number to string for printing
@@ -95,6 +133,7 @@ public class BytecodeCompiler extends HoodlumBaseVisitor<Void> {
         } else if (ctx.INT() != null) {
             // Convert int to string for printing
             String intValue = ctx.INT().getText();
+			System.out.println("s2="+intValue);
             mainMethod.visitLdcInsn(intValue);
         } else if (ctx.ID() != null) {
             // Variable reference - not implemented yet

@@ -16,6 +16,7 @@ statement
   | ifStmt                  #ifStmtStmt
   | printStmt               #printStmtStmt
   | depositStmt             #depositStmtStmt
+  | forStmt                 #forStmtStmt
   ;
 
 order
@@ -29,6 +30,18 @@ ifStmt: IF expr THEN statement;
 printStmt: PRINT (portfolioKw=PORTFOLIO | expr);
 
 depositStmt: DEPOSIT (NUMBER | INT);
+
+forStmt
+  : FOR ID '=' expr TO expr forBody NEXT
+  ;
+
+forBody
+  : (statement ';')*
+  ;
+
+FOR: 'FOR' | 'for';
+TO: 'TO' | 'to';
+NEXT: 'NEXT' | 'next';
 
 expr
   : '(' expr ')'

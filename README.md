@@ -1,6 +1,6 @@
 # Hoodlum
 
-Hoodlum is a tiny DSL for stock trading, built with ANTLR4 and Java.
+Hoodlum is a tiny DSL for stock trading.
 
 ## Build
 
@@ -13,6 +13,8 @@ mvn -q -DskipTests=false clean test package
 
 ## Run
 
+### Interpreter Mode (default)
+
 Run with an input file (see `examples/quickstart.hlm`):
 
 ```
@@ -24,6 +26,26 @@ Or run with the built-in demo program (no args):
 ```
 java -jar target/hoodlum-*-SNAPSHOT.jar
 ```
+
+### Bytecode Mode
+
+Compile Hoodlum programs to JVM bytecode and execute them:
+
+```bash
+# Compile and run with an input file
+mvn compile exec:java -Dexec.mainClass="com.hoodlum.BytecodeRunner" -Dexec.args="examples/simple.hlm"
+
+# Compile and run the built-in demo
+mvn compile exec:java -Dexec.mainClass="com.hoodlum.BytecodeRunner"
+```
+
+The BytecodeRunner will:
+1. Parse your Hoodlum program
+2. Generate JVM bytecode using ASM
+3. Write a `.class` file (e.g., `HoodlumProgram.class`)
+4. Load and execute the bytecode
+
+**Note**: Currently only `PRINT` statements with numbers and the `cash` variable are supported in bytecode mode.
 
 ## Language sketch
 

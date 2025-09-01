@@ -31,8 +31,7 @@ printStmt: PRINT (portfolioKw=PORTFOLIO | expr);
 
 depositStmt: DEPOSIT (NUMBER | INT);
 
-forStmt
-  : FOR ID '=' expr TO expr forBody NEXT
+forStmt: FOR ID '=' expr TO expr forBody NEXT
   ;
 
 forBody

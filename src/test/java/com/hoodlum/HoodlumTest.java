@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class HoodlumTest {
     @Test
     void parsesAndRunsQuickstart() throws Exception {
-        String src = java.nio.file.Files.readString(java.nio.file.Path.of("examples/quickstart.hlm"));
+        String src = java.nio.file.Files.readString(java.nio.file.Path.of("examples/simple.hlm"));
         var lexer = new HoodlumLexer(CharStreams.fromString(src));
         var tokens = new CommonTokenStream(lexer);
         var parser = new HoodlumParser(tokens);

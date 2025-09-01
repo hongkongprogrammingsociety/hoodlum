@@ -89,9 +89,9 @@ public class BytecodeCompiler extends HoodlumBaseVisitor<Void> {
     @Override
     public Void visitForStmtStmt(HoodlumParser.ForStmtStmtContext ctx) {
         // FOR x = start TO end ... NEXT
-        String varName = ctx.ID().getText();
-        HoodlumParser.ExprContext startExpr = ctx.expr(0);
-        HoodlumParser.ExprContext endExpr = ctx.expr(1);
+        String varName = ctx.forStmt().ID().getText();
+        HoodlumParser.ExprContext startExpr = ctx.forStmt().expr(0);
+        HoodlumParser.ExprContext endExpr = ctx.forStmt().expr(1);
 
         // Use local variable slot 1 for loop variable (slot 0 is 'args')
         int varSlot = 1;
@@ -110,8 +110,8 @@ public class BytecodeCompiler extends HoodlumBaseVisitor<Void> {
         mainMethod.visitJumpInsn(IF_ICMPGT, loopEnd);
 
         // Loop body: visit all statements inside the loop
-        if (ctx.forBody() != null) {
-            for (HoodlumParser.StatementContext stmtCtx : ctx.forBody().statement()) {
+        if (ctx.forStmt().forBody() != null) {
+            for (HoodlumParser.StatementContext stmtCtx : ctx.forStmt().forBody().statement()) {
                 visit(stmtCtx);
             }
         }

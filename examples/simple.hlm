@@ -2,5 +2,5 @@
 PRINT 12345;
 PRINT cash;
 FOR x=1 to 10
-	PRINT x
-NEXT
+	PRINT x;
+NEXT;

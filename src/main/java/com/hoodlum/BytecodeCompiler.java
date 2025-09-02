@@ -19,13 +19,16 @@ public class BytecodeCompiler extends HoodlumBaseVisitor<Void> {
     private final MethodVisitor mainMethod;
     private final String className;
 
+    // Use local variable slot 1 for loop variable (slot 0 is 'args')
+    int varSlot = 1;
+
     public BytecodeCompiler(String className) {
         this.className = className;
         this.classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
-        
+
         // Create class header
         classWriter.visit(V17, ACC_PUBLIC | ACC_SUPER, className, null, "java/lang/Object", null);
-        
+
         // Create default constructor
         MethodVisitor constructor = classWriter.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
         constructor.visitCode();
@@ -34,9 +37,10 @@ public class BytecodeCompiler extends HoodlumBaseVisitor<Void> {
         constructor.visitInsn(RETURN);
         constructor.visitMaxs(0, 0);
         constructor.visitEnd();
-        
+
         // Create main method
-        this.mainMethod = classWriter.visitMethod(ACC_PUBLIC | ACC_STATIC, "main", "([Ljava/lang/String;)V", null, null);
+        this.mainMethod = classWriter.visitMethod(ACC_PUBLIC | ACC_STATIC, "main", "([Ljava/lang/String;)V", null,
+                null);
         mainMethod.visitCode();
     }
 
@@ -45,7 +49,7 @@ public class BytecodeCompiler extends HoodlumBaseVisitor<Void> {
         mainMethod.visitInsn(RETURN);
         mainMethod.visitMaxs(0, 0);
         mainMethod.visitEnd();
-        
+
         classWriter.visitEnd();
         return classWriter.toByteArray();
     }
@@ -66,10 +70,10 @@ public class BytecodeCompiler extends HoodlumBaseVisitor<Void> {
     @Override
     public Void visitPrintStmtStmt(HoodlumParser.PrintStmtStmtContext ctx) {
         var printStmt = ctx.printStmt();
-        
+
         // Get System.out
         mainMethod.visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
-        
+
         if (printStmt.portfolioKw != null) {
             // PRINT portfolio
             mainMethod.visitLdcInsn("Portfolio: (not implemented in bytecode mode)");
@@ -79,10 +83,10 @@ public class BytecodeCompiler extends HoodlumBaseVisitor<Void> {
         } else {
             mainMethod.visitLdcInsn("(empty print)");
         }
-        
+
         // Call println
         mainMethod.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V", false);
-        
+
         return null;
     }
 
@@ -93,11 +97,12 @@ public class BytecodeCompiler extends HoodlumBaseVisitor<Void> {
         HoodlumParser.ExprContext startExpr = ctx.forStmt().expr(0);
         HoodlumParser.ExprContext endExpr = ctx.forStmt().expr(1);
 
-        // Use local variable slot 1 for loop variable (slot 0 is 'args')
-        int varSlot = 1;
-
+        int startVal = Integer.parseInt(startExpr.getText());
+        int endVal = Integer.parseInt(endExpr.getText());
+        System.out.println("FOR loop debug: varName=" + varName + ", start=" + startVal + ", end=" + endVal + ", varSlot=" + varSlot);
+    
         // Initialize loop variable
-        mainMethod.visitLdcInsn(Integer.parseInt(startExpr.getText()));
+        mainMethod.visitLdcInsn(startVal);
         mainMethod.visitVarInsn(ISTORE, varSlot);
 
         Label loopStart = new Label();
@@ -106,7 +111,7 @@ public class BytecodeCompiler extends HoodlumBaseVisitor<Void> {
 
         // Check loop condition: x <= end
         mainMethod.visitVarInsn(ILOAD, varSlot);
-        mainMethod.visitLdcInsn(Integer.parseInt(endExpr.getText()));
+        mainMethod.visitLdcInsn(endVal);
         mainMethod.visitJumpInsn(IF_ICMPGT, loopEnd);
 
         // Loop body: visit all statements inside the loop
@@ -118,6 +123,7 @@ public class BytecodeCompiler extends HoodlumBaseVisitor<Void> {
 
         // Increment loop variable
         mainMethod.visitIincInsn(varSlot, 1);
+        System.out.println("increment");
         mainMethod.visitJumpInsn(GOTO, loopStart);
 
         mainMethod.visitLabel(loopEnd);
@@ -133,12 +139,17 @@ public class BytecodeCompiler extends HoodlumBaseVisitor<Void> {
         } else if (ctx.INT() != null) {
             // Convert int to string for printing
             String intValue = ctx.INT().getText();
-			System.out.println("s2="+intValue);
+            System.out.println("s2=" + intValue);
             mainMethod.visitLdcInsn(intValue);
         } else if (ctx.ID() != null) {
-            // Variable reference - not implemented yet
+            // Variable reference: if matches loop variable, load from slot
             String varName = ctx.ID().getText();
-            mainMethod.visitLdcInsn("Variable(" + varName + ")");
+            if (varName.equals("x")) { // Only handles 'x' for now
+                mainMethod.visitVarInsn(ILOAD, varSlot);
+                mainMethod.visitMethodInsn(INVOKESTATIC, "java/lang/Integer", "toString", "(I)Ljava/lang/String;", false);
+            } else {
+                mainMethod.visitLdcInsn("Variable(" + varName + ")");
+            }
         } else if (ctx.CASH() != null) {
             // Cash variable
             mainMethod.visitLdcInsn("10000.0");

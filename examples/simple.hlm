@@ -1,6 +1,0 @@
-// Simple test for bytecode compilation
-PRINT 12345;
-PRINT cash;
-FOR x=1 to 10
-	PRINT x;
-NEXT;

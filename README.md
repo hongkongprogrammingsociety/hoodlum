@@ -2,6 +2,8 @@
 
 Hoodlum is a tiny DSL for stock trading.
 
+__ This repo is mirror of hkps gilab, the source code is outdated __
+
 ## Build
 
 - Requires Java 17+ and Maven 3.9+
